@@ -491,3 +491,46 @@ if armor.config.fire_protect == true then
 		return hp_change
 	end, true)
 end
+
+minetest.register_on_mods_loaded(function()
+	for k in pairs(armor.materials) do
+		-- Invisible armor
+		minetest.register_craft({ output = "invisible_3d_armor:helmet_"..k,     type = "shapeless", recipe = {"3d_armor:helmet_"..k} })
+		minetest.register_craft({ output = "3d_armor:helmet_"..k,               type = "shapeless", recipe = {"invisible_3d_armor:helmet_"..k} })
+		minetest.register_craft({ output = "invisible_3d_armor:chestplate_"..k, type = "shapeless", recipe = {"3d_armor:chestplate_"..k} })
+		minetest.register_craft({ output = "3d_armor:chestplate_"..k,           type = "shapeless", recipe = {"invisible_3d_armor:chestplate_"..k} })
+		minetest.register_craft({ output = "invisible_3d_armor:leggings_"..k,   type = "shapeless", recipe = {"3d_armor:leggings_"..k} })
+		minetest.register_craft({ output = "3d_armor:leggings_"..k,             type = "shapeless", recipe = {"invisible_3d_armor:leggings_"..k} })
+		minetest.register_craft({ output = "invisible_3d_armor:boots_"..k,      type = "shapeless", recipe = {"3d_armor:boots_"..k} })
+		minetest.register_craft({ output = "3d_armor:boots_"..k,                type = "shapeless", recipe = {"invisible_3d_armor:boots_"..k} })
+	end
+end)
+
+armor.craft_transfer_ware = function(itemstack, player, old_craft_grid, craft_inv)
+	local out_name = itemstack:get_name()
+
+	if out_name:sub(1, 19) == "invisible_3d_armor:" or out_name:sub(1, 18) == "invisible_shields:" then
+		for k, v in pairs(old_craft_grid) do
+			local v_name = v:get_name()
+			if v_name ~= "" then
+				return out_name .. " 1 " .. v:get_wear()
+			end
+		end
+	elseif out_name:sub(1, 9) == "3d_armor:" or out_name:sub(1, 8) == "shields:" then
+		for k, v in pairs(old_craft_grid) do
+			local v_name = v:get_name()
+			if v_name ~= "" then
+				if v_name:sub(1, 19) == "invisible_3d_armor:" or v_name:sub(1, 18) == "invisible_shields:" then
+					return out_name .. " 1 " .. v:get_wear()
+				else
+					break
+				end
+			end
+		end
+	end
+
+	return itemstack
+end
+
+minetest.register_craft_predict(armor.craft_transfer_ware)
+minetest.register_on_craft(armor.craft_transfer_ware)

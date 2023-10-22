@@ -33,6 +33,11 @@ unified_inventory.register_page("armor", {
 		local gridy = 0.6
 
 		local name = player:get_player_name()
+		if armor.def[name].init_time == 0 then
+			return {formspec="label[0,0;"..F(S("Armor not initialized!")).."]"}
+		end
+		local textures = player_api.get_textures(player)
+		local mesh = player:get_properties().mesh
 		local formspec = perplayer_formspec.standard_inv_bg..
 			perplayer_formspec.standard_inv..
 			ui.make_inv_img_grid(gridx, gridy, 2, 3)..
@@ -40,7 +45,9 @@ unified_inventory.register_page("armor", {
 				perplayer_formspec.form_header_x, perplayer_formspec.form_header_y, F(S("Armor")))..
 			string.format("list[detached:%s_armor;armor;%f,%f;2,3;]",
 				name, gridx + ui.list_img_offset, gridy + ui.list_img_offset) ..
-			"image[3.5,"..(fy - 0.25)..";2,4;"..armor.textures[name].preview.."]"..
+			"model[3.5,0.75;2,4;player_mesh;" .. mesh .. ";" ..
+			table.concat(textures, ",") ..
+			";0,180;false;true;0,0]" ..
 			"label[6.0,"..(fy + 0.0)..";"..F(S("Level"))..": "..armor.def[name].level.."]"..
 			"label[6.0,"..(fy + 0.5)..";"..F(S("Heal"))..":  "..armor.def[name].heal.."]"..
 			"listring[current_player;main]"..

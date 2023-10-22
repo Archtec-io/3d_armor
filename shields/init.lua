@@ -7,6 +7,8 @@
 -- support for i18n
 local S = minetest.get_translator(minetest.get_current_modname())
 
+local enhanced_shield_names = {}
+
 local disable_sounds = minetest.settings:get_bool("shields_disable_sounds")
 local function play_sound_effect(player, name)
 	if not disable_sounds and player then
@@ -113,6 +115,7 @@ if armor.materials.wood then
 		recipe = "shields:shield_wood",
 		burntime = 8,
 	})
+	table.insert(enhanced_shield_names, "shields:shield_enhanced_wood")
 end
 
 if armor.materials.cactus then
@@ -183,6 +186,7 @@ if armor.materials.cactus then
 		recipe = "shields:shield_cactus",
 		burntime = 16,
 	})
+	table.insert(enhanced_shield_names, "shields:shield_enhanced_cactus")
 end
 
 if armor.materials.steel then
@@ -408,4 +412,39 @@ for k, v in pairs(armor.materials) do
 			{"", v, ""},
 		},
 	})
+	-- Invisible shield
+	minetest.register_craft({ output = "invisible_shields:shield_"..k, type = "shapeless", recipe = {"shields:shield_"..k} })
+	minetest.register_craft({ output = "shields:shield_"..k,           type = "shapeless", recipe = {"invisible_shields:shield_"..k} })
+end
+
+-- Crafts for the invisible enhanced shields
+for _, v in pairs(enhanced_shield_names) do
+	minetest.register_craft({ output = "invisible_"..v, type = "shapeless", recipe = {v} })
+	minetest.register_craft({ output = v,               type = "shapeless", recipe = {"invisible_"..v} })
+end
+
+armor.craft_transfer_ware = function(itemstack, player, old_craft_grid, craft_inv)
+	local out_name = itemstack:get_name()
+
+	if out_name:sub(1, 18) == "invisible_shields:" then
+		for k, v in pairs(old_craft_grid) do
+			local v_name = v:get_name()
+			if v_name ~= "" then
+			return out_name .. " 1 " .. v:get_wear()
+			end
+		end
+	elseif out_name:sub(1, 8) == "shields:" then
+		for k, v in pairs(old_craft_grid) do
+			local v_name = v:get_name()
+			if v_name ~= "" then
+				if v_name:sub(1, 18) == "invisible_shields:" then
+					return out_name .. " 1 " .. v:get_wear()
+				else
+					break
+				end
+			end
+		end
+	end
+
+	return itemstack
 end

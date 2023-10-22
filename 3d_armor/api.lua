@@ -226,6 +226,19 @@ armor.register_armor = function(self, name, def)
 		" does not have \"_material\" specified at the end of the item registration name")
 	end
 	minetest.register_tool(name, def)
+
+	-- Add an invisible version of the the armor
+	if name:find("3d_armor:") or name:find("shields:") then
+		local invisible_def = table.copy(def)
+		invisible_def.inventory_image = invisible_def.inventory_image .. "^[mask:3d_armor_invisible.png"
+		invisible_def.groups["not_in_creative_inventory"] = 1
+		invisible_def.groups["invisarmor"] = 1
+		local new_name = name
+		if string.sub(name, 1, 1) == ":" then
+			new_name = name:sub(2, #name)
+		end
+		minetest.register_tool(":invisible_" .. new_name, invisible_def)
+	end
 end
 
 --- Registers a new armor group.
@@ -423,7 +436,7 @@ armor.set_player_armor = function(self, player)
 			tex = tex:gsub(".png$", "")
 			local prev = def.preview or tex.."_preview"
 			prev = prev:gsub(".png$", "")
-			if not transparent_armor then
+			if (tex:find("invisible_") == nil) and not transparent_armor then
 				texture = texture.."^"..tex..".png"
 			end
 			preview = preview.."^"..prev..".png"

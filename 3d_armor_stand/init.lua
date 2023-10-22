@@ -74,7 +74,7 @@ local function update_entity(pos)
 					local item = stack:get_name() or ""
 					local def = stack:get_definition() or {}
 					local groups = def.groups or {}
-					if groups["armor_"..element] then
+					if groups["armor_"..element] and not groups["invisarmor"] then
 						if def.texture then
 							table.insert(textures, def.texture)
 						else
