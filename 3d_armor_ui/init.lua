@@ -33,9 +33,6 @@ unified_inventory.register_page("armor", {
 		local gridy = 0.6
 
 		local name = player:get_player_name()
-		if armor.def[name].init_time == 0 then
-			return {formspec="label[0,0;"..F(S("Armor not initialized!")).."]"}
-		end
 		local textures = player_api.get_textures(player)
 		local mesh = player:get_properties().mesh
 		local formspec = perplayer_formspec.standard_inv_bg..
