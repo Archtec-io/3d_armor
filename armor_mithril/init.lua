@@ -82,7 +82,7 @@ if armor.materials.mithril then
 	armor:register_armor(":3d_armor:boots_mithril", {
 		description = S("Mithril Boots"),
 		inventory_image = "3d_armor_inv_boots_mithril.png",
-		groups = {armor_feet=1, armor_heal=13, armor_use=66, physics_jump=0.8, physics_speed=1.5, physics_gravity=0},
+		groups = {armor_feet=1, armor_heal=13, armor_use=66, physics_jump=0.6, physics_speed=1, physics_gravity=0},
 		armor_groups = {fleshy=16},
 		damage_groups = {cracky=2, snappy=1, level=3},
 	})
