@@ -420,14 +420,22 @@ armor.set_player_armor = function(self, player)
 				end
 			end
 			local item = stack:get_name()
-			local tex = def.texture or item:gsub("%:", "_")
-			tex = tex:gsub(".png$", "")
-			local prev = def.preview or tex.."_preview"
-			prev = prev:gsub(".png$", "")
-			if not transparent_armor then
-				texture = texture.."^"..tex..".png"
+			local tex
+			-- Allow empty texture names for convenience
+			if def.texture ~= "" then
+				tex = def.texture or item:gsub("%:", "_")
+				tex = tex:gsub(".png$", "")
 			end
-			preview = preview.."^"..prev..".png"
+			if def.preview ~= "" then
+				local prev = def.preview or tex and tex.."_preview"
+				if prev then
+					prev = prev:gsub(".png$", "")
+					preview = preview.."^"..prev..".png"
+				end
+			end
+			if not transparent_armor and tex then
+				texture = texture .. "^" .. tex .. ".png"
+			end
 			state = state + stack:get_wear()
 			count = count + 1
 			for _, phys in pairs(self.physics) do
