@@ -438,7 +438,6 @@ armor.set_player_armor = function(self, player)
 			if def.texture ~= "" then
 				tex = def.texture or item:gsub("%:", "_")
 				tex = tex:gsub(".png$", "")
-				
 			end
 			if def.preview ~= "" then
 				local prev = def.preview or tex and tex.."_preview"
